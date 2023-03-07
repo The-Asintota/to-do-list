@@ -1,0 +1,21 @@
+{% extends 'base/index.html' %}
+{% block title %}Iniciar sesión{% endblock title %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    {% if request.POST %}
+    <div>{{error}}</div>
+    {% endif %}
+    <div>
+        <label for="{{form.email.id_for_label}}" class="">{{form.email.label}}</label>
+        {{form.email}}
+    </div>
+    <div>
+        <label for="{{form.password.id_for_label}}" class="">{{form.password.label}}</label>
+        {{form.password}}
+        </div>
+    <button class="">Entrar</button>
+</form>
+<p>¿No tienes una cuenta? | <a href="{% url 'signup' %}">Crear una cuenta</a></p>
+{% endblock content %}
+
