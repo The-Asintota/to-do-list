@@ -128,7 +128,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'home_page.CustomUser'
 
 # Custom ModelBackend
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.AllowAllUsersModelBackend',
-    'home_page.backends.CaseInsensitiveModelBackend'
-)
+AUTHENTICATION_BACKENDS = [
+    'home_page.backends.EmailBackend'
+]
+
+

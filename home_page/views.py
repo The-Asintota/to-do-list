@@ -7,10 +7,9 @@ from .models import CustomUser
 
 def authenticate_user(request):
     user = authenticate(request,
-        username = request.POST.get('email', ''),
-        password = request.POST.get('password', '')
+        email = request.POST.get('email'),
+        password = request.POST.get('password')
     )
-    print(request.POST.get('email', ''))
     return user
 
 def exists_email(email):
@@ -26,11 +25,14 @@ def login(request):
         return render(request, 'registration/login.html', {
             'form':LoginForm,
         })
-    else:
-        if authenticate_user(request) is None:
+    if request.method == 'post':
+        user = authenticate_user(request)
+        if user is None:
+            # falta mensaje de error
             return render(request, 'registration/login.html', {
                 'form':LoginForm(request.POST),
             })
+        cookies_login(request, user, backend='home_page.backends.EmailBackend')
         return redirect('create_task')
             
 def signup(request):
@@ -38,11 +40,13 @@ def signup(request):
         return render(request, 'home_page/signup.html', {
             'form':UserRegisterForm,
         })
-    else:
+    if request.method == 'post':
+        # Validation form
         if UserRegisterForm(request.POST).is_valid():
-            email = request.POST.get('email', '').lower()
-            username = request.POST.get('username', '').lower()
-            password = request.POST.get('password', '')
+            email = request.POST.get('email').lower()
+            username = request.POST.get('username').lower()
+            password = request.POST.get('password1')
+            
             # Register user
             if not exists_email(email):
                 user = CustomUser.objects.create_user(
@@ -51,8 +55,9 @@ def signup(request):
                     password=password,
                 )
                 user.save()
-                cookies_login(request, user, backend='home_page.backends.CaseInsensitiveModelBackend')
+                cookies_login(request, user, backend='home_page.backends.EmailBackend')
                 return redirect('create_task')
+        # falta mensaje de error
         return render(request, 'home_page/signup.html', {
             'form':UserRegisterForm(request.POST),
         }) 
